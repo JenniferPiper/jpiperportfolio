@@ -1,4 +1,5 @@
 import { render } from 'react-dom';
+import DataActions from 'flux/actions/DataActions'
 import Home from 'components/Home.js';
 
 import {
@@ -9,13 +10,27 @@ import {
 } from 'react-router-dom';
 
 class AppInitializer {
+  buildRoutes(data) {
+    return data.pages.map((page, i) => {
+      return(
+        <Route
+        key={i}
+        component={ Home }
+        path={`/${page.slug}`}
+        exact
+        />
+      )
+    })
+  }
 
   run() {
+    DataActions.getPages((response) => {
     render(
       <Router>
         <div>
           <Switch>
             <Route path="/" component={ Home } exact />
+            {this.buildRoutes(response)}
             <Route render={() => { return <Redirect to="/" /> }} />
           </Switch>
         </div>
@@ -23,6 +38,8 @@ class AppInitializer {
 
       , document.getElementById('app')
     );
+
+    });
   }
 }
 
